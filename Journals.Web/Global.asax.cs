@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using Journals.Model;
-using Journals.Repository.DataContext;
+﻿using Journals.Data;
 using Journals.Web.IoC;
 using System;
 using System.Data.Entity;
@@ -10,6 +8,7 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using WebMatrix.WebData;
 
 namespace Journals.Web
 {
@@ -24,7 +23,7 @@ namespace Journals.Web
 
         protected void Application_Start()
         {
-            Database.SetInitializer<JournalsContext>(new ModelChangedInitializer());
+            Database.SetInitializer<JournalsContext>(new JournalInitializer());
             AreaRegistration.RegisterAllAreas();
 
             WebApiConfig.Register(GlobalConfiguration.Configuration);
@@ -35,15 +34,6 @@ namespace Journals.Web
 
             var mappingContainer = IoCMappingContainer.GetInstance();
             DependencyResolver.SetResolver(new IoCScopeContainer(mappingContainer));
-
-            //Mapper.Map<Journal, JournalViewModel>(;
-            //Mapper.CreateMap<JournalViewModel, Journal>();
-
-            //Mapper.CreateMap<Journal, JournalUpdateViewModel>();
-            //Mapper.CreateMap<JournalUpdateViewModel, Journal>();
-
-            //Mapper.CreateMap<Journal, SubscriptionViewModel>();
-            //Mapper.CreateMap<SubscriptionViewModel, Journal>();
 
             LazyInitializer.EnsureInitialized(ref _initializer, ref _isInitialized, ref _initializerLock);
         }
@@ -60,6 +50,18 @@ namespace Journals.Web
             }
 
             Server.ClearError();
+        }
+
+        public class SimpleMembershipInitializer
+        {
+            public SimpleMembershipInitializer()
+            {
+                using (var context = new JournalsContext())
+                    context.UserProfiles.Find(1);
+
+                if (!WebSecurity.Initialized)
+                    WebSecurity.InitializeDatabaseConnection("JournalsDB", "UserProfile", "UserId", "UserName", autoCreateTables: true);
+            }
         }
     }
 }

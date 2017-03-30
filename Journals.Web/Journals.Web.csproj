@@ -223,8 +223,12 @@
     <Compile Include="IoC\IoCMappingContainer.cs" />
     <Compile Include="IoC\IoCScopeContainer.cs" />
     <Compile Include="IoC\ScopeContainer.cs" />
-    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Mapper\MappingProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\AccountModels.cs" />
+    <Compile Include="ViewModels\JournalUpdateViewModel.cs" />
+    <Compile Include="ViewModels\JournalViewModel.cs" />
+    <Compile Include="ViewModels\SubscriptionViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -366,12 +370,19 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Journals.Core\Journals.Core.csproj">
+      <Project>{CA18F84E-6822-4E34-A6CE-2B0CBD783534}</Project>
+      <Name>Journals.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Journals.Data\Journals.Data.csproj">
+      <Project>{25BDF428-BCA6-4F15-91D8-78C1CA19E3D9}</Project>
+      <Name>Journals.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Journals.Model\Journals.Model.csproj">
       <Project>{142360ab-7cc4-4e10-99db-a402d1bc60f7}</Project>
       <Name>Journals.Model</Name>
@@ -379,6 +390,10 @@
     <ProjectReference Include="..\Journals.Repository\Journals.Repository.csproj">
       <Project>{dddd0c77-9174-4b95-91e1-360fde8dd1d5}</Project>
       <Name>Journals.Repository</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Journals.Service\Journals.Service.csproj">
+      <Project>{a1a83c6a-9cc7-489d-a8e7-721c78b753e4}</Project>
+      <Name>Journals.Service</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

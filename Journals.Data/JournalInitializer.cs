@@ -3,16 +3,12 @@ using System.Linq;
 using System.Web.Security;
 using WebMatrix.WebData;
 
-namespace Journals.Repository.DataContext
+namespace Journals.Data
 {
-    public class ModelChangedInitializer : DropCreateDatabaseIfModelChanges<JournalsContext>
+    public class JournalInitializer : DropCreateDatabaseIfModelChanges<JournalsContext>
     {
         protected override void Seed(JournalsContext context)
         {
-            DataInitializer.Initialize(context);
-
-            using (var context1 = new UsersContext())
-                context1.UserProfiles.Find(1);
 
             if (!WebSecurity.Initialized)
                 WebSecurity.InitializeDatabaseConnection("JournalsDB", "UserProfile", "UserId", "UserName", autoCreateTables: true);

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Journals.Model
+namespace Journals.Web.ViewModels
 {
     public class RegisterExternalLoginModel
     {

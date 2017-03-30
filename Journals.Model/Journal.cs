@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Journals.Model
 {
-    public class Journal
+    public class Journal : BaseEntity
     {
         public int Id { get; set; }
 
@@ -17,6 +18,11 @@ namespace Journals.Model
         public string FileName { get; set; }
 
         public string ContentType { get; set; }
+
+        public List<Journal> ToList()
+        {
+            throw new NotImplementedException();
+        }
 
         public byte[] Content { get; set; }
 

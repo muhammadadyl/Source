@@ -2,7 +2,7 @@
 
 namespace Journals.Model
 {
-    public class Subscription
+    public class Subscription : BaseEntity
     {
         public int Id { get; set; }
 

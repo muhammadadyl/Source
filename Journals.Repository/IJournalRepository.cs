@@ -1,18 +1,14 @@
-﻿using Journals.Model;
+﻿using Journals.Core.Common;
+using Journals.Data.Infrastructure;
+using Journals.Model;
 using System.Collections.Generic;
 
 namespace Journals.Repository
 {
-    public interface IJournalRepository
+    public interface IJournalRepository : IRepository<Journal>
     {
         List<Journal> GetAllJournals(int userId);
 
-        OperationStatus AddJournal(Journal newJournal);
-
         Journal GetJournalById(int Id);
-
-        OperationStatus DeleteJournal(Journal journal);
-
-        OperationStatus UpdateJournal(Journal journal);
     }
 }

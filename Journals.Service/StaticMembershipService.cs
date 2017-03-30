@@ -1,11 +1,13 @@
-﻿using System.Web.Security;
+﻿using Journals.Service.Interfaces;
+using System.Web.Security;
 using WebMatrix.WebData;
+using WebMatrix.Data;
 
 namespace Journals.Repository
 {
     public class StaticMembershipService : IStaticMembershipService
     {
-        public System.Web.Security.MembershipUser GetUser()
+        public MembershipUser GetUser()
         {
             return Membership.GetUser();
         }

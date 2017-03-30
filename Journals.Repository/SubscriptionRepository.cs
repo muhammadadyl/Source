@@ -1,40 +1,43 @@
-﻿using Journals.Model;
-using Journals.Repository.DataContext;
+﻿using Journals.Core.Common;
+using Journals.Data.Infrastructure;
+using Journals.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Journals.Repository
 {
-    public class SubscriptionRepository : RepositoryBase<JournalsContext>, ISubscriptionRepository
+    public class SubscriptionRepository : RepositoryBase<Subscription>, ISubscriptionRepository
     {
+        public SubscriptionRepository(IDatabaseFactory databaseFactory) : base(databaseFactory)
+        {
+
+        }
+
         public List<Journal> GetAllJournals()
         {
             try
             {
-                using (DataContext)
-                {
-                    var result = from a in DataContext.Journals
-                                 where a.Title != null
-                                 select new { a.Id, a.Title, a.Description, a.User, a.UserId, a.ModifiedDate, a.FileName };
+                var result = from a in DataContext.Set<Journal>()
+                             where a.Title != null
+                             select new { a.Id, a.Title, a.Description, a.User, a.UserId, a.ModifiedDate, a.FileName };
 
-                    if (result == null)
-                        return new List<Journal>();
+                if (result == null)
+                    return new List<Journal>();
 
-                    List<Journal> list = result.AsEnumerable()
-                                              .Select(f => new Journal
-                                              {
-                                                  Id = f.Id,
-                                                  Title = f.Title,
-                                                  Description = f.Description,
-                                                  UserId = f.UserId,
-                                                  User = f.User,
-                                                  ModifiedDate = f.ModifiedDate,
-                                                  FileName = f.FileName
-                                              }).ToList();
+                List<Journal> list = result.AsEnumerable()
+                                          .Select(f => new Journal
+                                          {
+                                              Id = f.Id,
+                                              Title = f.Title,
+                                              Description = f.Description,
+                                              UserId = f.UserId,
+                                              User = f.User,
+                                              ModifiedDate = f.ModifiedDate,
+                                              FileName = f.FileName
+                                          }).ToList();
 
-                    return list;
-                }
+                return list;
             }
             catch (Exception e)
             {
@@ -48,12 +51,9 @@ namespace Journals.Repository
         {
             try
             {
-                using (DataContext)
-                {
-                    var subscriptions = DataContext.Subscriptions.Where(u => u.UserId == userId);
+                    var subscriptions = GetList(u => u.UserId == userId);
                     if (subscriptions != null)
                         return subscriptions.ToList();
-                }
             }
             catch (Exception e)
             {
@@ -67,12 +67,10 @@ namespace Journals.Repository
         {
             try
             {
-                using (DataContext)
-                {
-                    var subscriptions = DataContext.Subscriptions.Include("Journal").Where(u => u.User.UserName == userName);
+
+                    var subscriptions = DataContext.Set<Subscription>().Include("Journal").Where(u => u.User.UserName == userName);
                     if (subscriptions != null)
                         return subscriptions.ToList();
-                }
             }
             catch (Exception e)
             {
@@ -80,52 +78,6 @@ namespace Journals.Repository
             }
 
             return new List<Subscription>();
-        }
-
-        public OperationStatus AddSubscription(int journalId, int userId)
-        {
-            var opStatus = new OperationStatus { Status = true };
-            try
-            {
-                using (DataContext)
-                {
-                    Subscription s = new Subscription();
-                    s.JournalId = journalId;
-                    s.UserId = userId;
-                    var j = DataContext.Subscriptions.Add(s);
-                    DataContext.SaveChanges();
-                }
-            }
-            catch (Exception e)
-            {
-                opStatus = OperationStatus.CreateFromException("Error adding subscription: ", e);
-            }
-
-            return opStatus;
-        }
-
-        public OperationStatus UnSubscribe(int journalId, int userId)
-        {
-            var opStatus = new OperationStatus { Status = true };
-            try
-            {
-                using (DataContext)
-                {
-                    var subscriptions = DataContext.Subscriptions.Where(u => u.JournalId == journalId && u.UserId == userId);
-
-                    foreach (var s in subscriptions)
-                    {
-                        DataContext.Subscriptions.Remove(s);
-                    }
-                    DataContext.SaveChanges();
-                }
-            }
-            catch (Exception e)
-            {
-                opStatus = OperationStatus.CreateFromException("Error deleting subscription: ", e);
-            }
-
-            return opStatus;
         }
     }
 }

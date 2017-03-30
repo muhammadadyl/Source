@@ -2,6 +2,8 @@
 using Journals.Model;
 using Journals.Repository;
 using Journals.Web.Controllers;
+using Journals.Web.ViewModels;
+using Journals.Web.Mapper;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -18,7 +20,6 @@ namespace Journals.Web.Tests.Controllers
         [TestMethod]
         public void Index_Returns_All_Journals()
         {
-            //Mapper.CreateMap<Journal, JournalViewModel>();
 
             //Arrange
             var membershipRepository = Mock.Create<IStaticMembershipService>();
@@ -32,8 +33,11 @@ namespace Journals.Web.Tests.Controllers
                     new Journal{ Id=1, Description="TestDesc2", FileName="TestFilename2.pdf", Title="Tester2", UserId=1, ModifiedDate = DateTime.Now}
             }).MustBeCalled();
 
+            //Mapper instance for Injection
+            var mapper = MappingProfile.InitializeAutoMapper().CreateMapper();
+
             //Act
-            PublisherController controller = new PublisherController(journalRepository, membershipRepository);
+            PublisherController controller = new PublisherController(journalRepository, membershipRepository, mapper);
             ViewResult actionResult = (ViewResult)controller.Index();
             var model = actionResult.Model as IEnumerable<JournalViewModel>;
 
