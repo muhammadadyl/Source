@@ -11,6 +11,8 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Web.Security;
 using Telerik.JustMock;
+using Journals.Service.Interfaces;
+
 
 namespace Journals.Web.Tests.Controllers
 {
@@ -22,13 +24,13 @@ namespace Journals.Web.Tests.Controllers
         {
 
             //Arrange
-            var membershipRepository = Mock.Create<IStaticMembershipService>();
+            var membershipService = Mock.Create<IStaticMembershipService>();
             var userMock = Mock.Create<MembershipUser>();
             Mock.Arrange(() => userMock.ProviderUserKey).Returns(1);
-            Mock.Arrange(() => membershipRepository.GetUser()).Returns(userMock);
+            Mock.Arrange(() => membershipService.GetUser()).Returns(userMock);
 
-            var journalRepository = Mock.Create<IJournalRepository>();
-            Mock.Arrange(() => journalRepository.GetAllJournals((int)userMock.ProviderUserKey)).Returns(new List<Journal>(){
+            var journalService = Mock.Create<IJournalService>();
+            Mock.Arrange(() => journalService.GetAllJournals((int)userMock.ProviderUserKey)).Returns(new List<Journal>(){
                     new Journal{ Id=1, Description="TestDesc", FileName="TestFilename.pdf", Title="Tester", UserId=1, ModifiedDate= DateTime.Now},
                     new Journal{ Id=1, Description="TestDesc2", FileName="TestFilename2.pdf", Title="Tester2", UserId=1, ModifiedDate = DateTime.Now}
             }).MustBeCalled();
@@ -37,12 +39,18 @@ namespace Journals.Web.Tests.Controllers
             var mapper = MappingProfile.InitializeAutoMapper().CreateMapper();
 
             //Act
-            PublisherController controller = new PublisherController(journalRepository, membershipRepository, mapper);
+            PublisherController controller = new PublisherController(journalService, membershipService, mapper);
             ViewResult actionResult = (ViewResult)controller.Index();
             var model = actionResult.Model as IEnumerable<JournalViewModel>;
 
             //Assert
             Assert.AreEqual(2, model.Count());
+        }
+
+        [TestMethod()]
+        public void GetFileById_return_journal()
+        {
+            Assert.Fail();
         }
     }
 }

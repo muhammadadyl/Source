@@ -14,6 +14,7 @@ namespace Journals.Data
         public DbSet<Journal> Journals { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
+        public DbSet<Issue> Issues { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {

@@ -73,7 +73,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IIssueRepository.cs" />
     <Compile Include="IJournalRepository.cs" />
+    <Compile Include="IssueRepository.cs" />
     <Compile Include="ISubscriptionRepository.cs" />
     <Compile Include="IUserProfileRepository.cs" />
     <Compile Include="SubscriptionRepository.cs" />

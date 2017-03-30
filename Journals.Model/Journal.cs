@@ -19,11 +19,6 @@ namespace Journals.Model
 
         public string ContentType { get; set; }
 
-        public List<Journal> ToList()
-        {
-            throw new NotImplementedException();
-        }
-
         public byte[] Content { get; set; }
 
         public DateTime ModifiedDate { get; set; }

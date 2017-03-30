@@ -138,6 +138,10 @@
       <Project>{dddd0c77-9174-4b95-91e1-360fde8dd1d5}</Project>
       <Name>Journals.Repository</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Journals.Service\Journals.Service.csproj">
+      <Project>{A1A83C6A-9CC7-489D-A8E7-721C78B753E4}</Project>
+      <Name>Journals.Service</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Journals.Web\Journals.Web.csproj">
       <Project>{252f3065-dcbd-4db2-9ee4-dc38fd1f63cd}</Project>
       <Name>Journals.Web</Name>

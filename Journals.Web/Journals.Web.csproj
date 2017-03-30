@@ -214,7 +214,6 @@
     <Compile Include="Controllers\PublisherController.cs" />
     <Compile Include="Controllers\SubscriberController.cs" />
     <Compile Include="Filters\AuthorizeRedirectAttribute.cs" />
-    <Compile Include="Filters\InitializeSimpleMembershipAttribute.cs" />
     <Compile Include="Filters\ValidateOnlyIncomingValuesAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
