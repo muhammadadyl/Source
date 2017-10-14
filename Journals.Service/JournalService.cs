@@ -75,15 +75,6 @@ namespace Journals.Service
                 if (journal.Description != null)
                     j.Description = journal.Description;
 
-                if (journal.Content != null)
-                    j.Content = journal.Content;
-
-                if (journal.ContentType != null)
-                    j.ContentType = journal.ContentType;
-
-                if (journal.FileName != null)
-                    j.FileName = journal.FileName;
-
                 j.ModifiedDate = DateTime.Now;
 
                 _journalRepository.Update(j);

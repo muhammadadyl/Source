@@ -22,6 +22,9 @@ namespace Journals.Web.Mapper
 
                 cfg.CreateMap<Journal, SubscriptionViewModel>();
                 cfg.CreateMap<SubscriptionViewModel, Journal>();
+
+                cfg.CreateMap<Issue, IssueViewModel>();
+                cfg.CreateMap<IssueViewModel, Issue>();
             });
 
             return config;

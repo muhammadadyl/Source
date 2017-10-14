@@ -15,17 +15,13 @@ namespace Journals.Model
         [Required, DataType(DataType.MultilineText)]
         public string Description { get; set; }
 
-        public string FileName { get; set; }
-
-        public string ContentType { get; set; }
-
-        public byte[] Content { get; set; }
-
         public DateTime ModifiedDate { get; set; }
 
         [ForeignKey("UserId")]
         public UserProfile User { get; set; }
 
         public int UserId { get; set; }
+
+        public ICollection<Issue> Issues { get; set; }
     }
 }

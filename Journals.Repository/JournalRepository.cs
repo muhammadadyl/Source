@@ -26,7 +26,7 @@ namespace Journals.Repository
 
         public Journal GetJournalById(int Id)
         {
-            return GetById(Id);
+            return GetList(p => p.Id == Id).Include("Issues").SingleOrDefault();
         }
 
     }

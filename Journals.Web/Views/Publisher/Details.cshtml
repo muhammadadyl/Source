@@ -1,0 +1,68 @@
+﻿@model Journals.Web.ViewModels.JournalViewModel
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Journal</h4>
+    <hr />
+    <dl class="dl-horizontal">
+
+        <dt>
+            <b>@Html.DisplayNameFor(model => model.Title)</b>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            <b> @Html.DisplayNameFor(model => model.Description)</b>
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+    </dl>
+
+    <p>
+        @Html.ActionLink("Create New Issue", "Create", "Issue", new { Id = Model.Id }, null)
+    </p>
+
+    @if (Model.Issues.Count > 0)
+    {
+        <table class="table table-condensed table-striped">
+            <thead>
+                <tr>
+                    <th>Version</th>
+                    <th>File</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Issues)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Version)
+                        </td>
+                        <td>
+                            @Html.ActionLink(item.FileName, "GetFile", "Issue", new { Id = item.Id }, new { target = "_blank" })
+                        </td>
+                        <td>
+                            @Html.ActionLink("Edit", "Edit", "Issue", new { id = item.Id }, null) |
+                            @Html.ActionLink("Delete", "Delete", "Issue", new { id = item.Id }, null)
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

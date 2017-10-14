@@ -18,14 +18,8 @@ namespace Journals.Repository
         {
             try
             {
-                var result = from a in DataContext.Set<Journal>()
-                             where a.Title != null
-                             select new { a.Id, a.Title, a.Description, a.User, a.UserId, a.ModifiedDate, a.FileName };
 
-                if (result == null)
-                    return new List<Journal>();
-
-                List<Journal> list = result.AsEnumerable()
+                List<Journal> list = DataContext.Set<Journal>()
                                           .Select(f => new Journal
                                           {
                                               Id = f.Id,
@@ -33,8 +27,7 @@ namespace Journals.Repository
                                               Description = f.Description,
                                               UserId = f.UserId,
                                               User = f.User,
-                                              ModifiedDate = f.ModifiedDate,
-                                              FileName = f.FileName
+                                              ModifiedDate = f.ModifiedDate
                                           }).ToList();
 
                 return list;

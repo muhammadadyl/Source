@@ -1,0 +1,41 @@
+﻿@model Journals.Web.ViewModels.IssueViewModel
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Create</h2>
+
+
+@using (Html.BeginForm("Create", "Issue", null, FormMethod.Post, new { enctype = "multipart/form-data" })) 
+{
+    @Html.AntiForgeryToken()
+    
+    <div class="form-horizontal">
+        <h4>Issue</h4>
+        <hr />
+        <div class="form-group">
+            @Html.Label("File", new { @class = "control-label col-md-2" })
+            (Not more than 3.5 MB)
+            <div class="col-md-10">
+
+                @Html.TextBoxFor(m => Model.File, new { type = "file", accept = ".pdf" })
+                @Html.ValidationMessageFor(m => Model.File)
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Details", "Publisher", new { Id = Model.JournalId })
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

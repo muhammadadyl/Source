@@ -61,6 +61,11 @@ namespace Journals.Web.ViewModels
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [DataType(DataType.EmailAddress)]
+        [Display(Name = "Email Address")]
+        [Required]
+        public string EmailAddress { get; set; }
     }
 
     public class ExternalLogin

@@ -29,23 +29,21 @@ namespace Journals.Web.Controllers
         {
             var userId = (int)_membershipService.GetUser().ProviderUserKey;
 
-            List<Journal> allJournals = _journalService.GetAllJournals(userId);
+            var allJournals = _journalService.GetAllJournals(userId);
             var journals = _mapper.Map<List<Journal>, List<JournalViewModel>>(allJournals);// Mapper Updates cause syntax change
             return View(journals);
+        }
+
+        public ActionResult Details(int id)
+        {
+            var selectedJournal = _journalService.GetJournalById(id);
+            var journal = _mapper.Map<Journal, JournalViewModel>(selectedJournal);// Mapper Updates cause syntax change
+            return View(journal);
         }
 
         public ActionResult Create()
         {
             return View();
-        }
-
-        public ActionResult GetFile(int Id)
-        {
-            Journal j = _journalService.GetJournalById(Id);
-            if (j == null)
-                throw new System.Web.Http.HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound));
-
-            return File(j.Content, j.ContentType);
         }
 
         [HttpPost]
@@ -55,7 +53,6 @@ namespace Journals.Web.Controllers
             if (ModelState.IsValid)
             {
                 var newJournal = _mapper.Map<JournalViewModel, Journal>(journal);// Mapper Updates cause syntax change
-                JournalHelper.PopulateFile(journal.File, newJournal);
 
                 newJournal.UserId = (int)_membershipService.GetUser().ProviderUserKey;
 
@@ -72,8 +69,12 @@ namespace Journals.Web.Controllers
         public ActionResult Delete(int Id)
         {
             var selectedJournal = _journalService.GetJournalById(Id);
-            var journal = _mapper.Map<Journal, JournalViewModel>(selectedJournal);// Mapper Updates cause syntax change
-            return View(journal);
+            if (selectedJournal.UserId == (int) _membershipService.GetUser().ProviderUserKey)
+            {
+                var journal = _mapper.Map<Journal, JournalViewModel>(selectedJournal);// Mapper Updates cause syntax change
+                return View(journal); 
+            }
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -82,10 +83,13 @@ namespace Journals.Web.Controllers
         {
             var selectedJournal = _mapper.Map<JournalViewModel, Journal>(journal); // Mapper Updates cause syntax change
 
-            var opStatus = _journalService.DeleteJournal(selectedJournal);
-            if (!opStatus.Status)
-                throw new System.Web.Http.HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound));
+            if (selectedJournal?.UserId == (int)_membershipService.GetUser().ProviderUserKey)
+            {
+                var opStatus = _journalService.DeleteJournal(selectedJournal);
+                if (!opStatus.Status)
+                    throw new System.Web.Http.HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound));
 
+            }
             return RedirectToAction("Index");
         }
 
@@ -93,20 +97,22 @@ namespace Journals.Web.Controllers
         {
             var journal = _journalService.GetJournalById(Id);
 
-            var selectedJournal = _mapper.Map<Journal, JournalUpdateViewModel>(journal);// Mapper Updates cause syntax change
+            if (journal?.UserId == (int)_membershipService.GetUser().ProviderUserKey)
+            {
+                var selectedJournal = _mapper.Map<Journal, JournalUpdateViewModel>(journal);// Mapper Updates cause syntax change
 
-            return View(selectedJournal);
+                return View(selectedJournal); 
+            }
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(JournalUpdateViewModel journal)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && journal?.UserId == (int)_membershipService.GetUser().ProviderUserKey)
             {
                 var selectedJournal = _mapper.Map<JournalUpdateViewModel, Journal>(journal);// Mapper Updates cause syntax change
-                JournalHelper.PopulateFile(journal.File, selectedJournal);
-
                 var opStatus = _journalService.UpdateJournal(selectedJournal);
                 if (!opStatus.Status)
                     throw new System.Web.Http.HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound));
@@ -115,11 +121,6 @@ namespace Journals.Web.Controllers
             }
             else
                 return View(journal);
-        }
-
-        protected override void OnException(ExceptionContext filterContext)
-        {
-            base.OnException(filterContext);
         }
     }
 }

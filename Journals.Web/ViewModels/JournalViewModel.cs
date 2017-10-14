@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Journals.Model;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web;
 
@@ -14,16 +16,9 @@ namespace Journals.Web.ViewModels
         [Required, DataType(DataType.MultilineText)]
         public string Description { get; set; }
 
-        public string FileName { get; set; }
-
-        public string ContentType { get; set; }
-
-        public byte[] Content { get; set; }
-
-        [Required, ValidateFile]
-        public HttpPostedFileBase File { get; set; }
-
         public int UserId { get; set; }
+
+        public ICollection<Issue> Issues { get; set; }
     }
 
     public class ValidateFileAttribute : ValidationAttribute
