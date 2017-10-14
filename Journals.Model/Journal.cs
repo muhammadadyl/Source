@@ -15,7 +15,7 @@ namespace Journals.Model
         [Required, DataType(DataType.MultilineText)]
         public string Description { get; set; }
 
-        public DateTime ModifiedDate { get; set; }
+        public DateTime ModifiedDate { get; set; } = DateTime.Now;
 
         [ForeignKey("UserId")]
         public UserProfile User { get; set; }
@@ -23,5 +23,6 @@ namespace Journals.Model
         public int UserId { get; set; }
 
         public ICollection<Issue> Issues { get; set; }
+
     }
 }

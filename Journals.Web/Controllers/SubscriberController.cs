@@ -17,14 +17,16 @@ namespace Journals.Web.Controllers
     {
         private IJournalService _journalService;
         private IIssueService _issueService;
+        private IStaticMembershipService _membershipService;
         private ISubscriptionService _subscriptionService;
         private IMapper _mapper;
 
-        public SubscriberController(IJournalService journalService, IIssueService issueService, ISubscriptionService subscriptionService, IMapper mapper)
+        public SubscriberController(IJournalService journalService, IStaticMembershipService membershipService, IIssueService issueService, ISubscriptionService subscriptionService, IMapper mapper)
         {
             _journalService = journalService;
             _issueService = issueService;
             _subscriptionService = subscriptionService;
+            _membershipService = membershipService;
             _mapper = mapper;
         }
 
@@ -35,7 +37,7 @@ namespace Journals.Web.Controllers
             if (journals == null)
                 return View();
 
-            var userId = (int)Membership.GetUser().ProviderUserKey;
+            var userId = (int)_membershipService.GetUser().ProviderUserKey;
             var subscriptions = _subscriptionService.GetJournalsForSubscriber(userId);
 
             var subscriberModel = _mapper.Map<List<Journal>, List<SubscriptionViewModel>>(journals);
@@ -50,7 +52,7 @@ namespace Journals.Web.Controllers
 
         public ActionResult Subscribe(int Id)
         {
-            var opStatus = _subscriptionService.AddSubscription(Id, (int)Membership.GetUser().ProviderUserKey);
+            var opStatus = _subscriptionService.AddSubscription(Id, (int)_membershipService.GetUser().ProviderUserKey);
             if (!opStatus.Status)
                 throw new System.Web.Http.HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound));
 
@@ -59,7 +61,7 @@ namespace Journals.Web.Controllers
 
         public ActionResult UnSubscribe(int Id)
         {
-            var opStatus = _subscriptionService.UnSubscribe(Id, (int)Membership.GetUser().ProviderUserKey);
+            var opStatus = _subscriptionService.UnSubscribe(Id, (int)_membershipService.GetUser().ProviderUserKey);
             if (!opStatus.Status)
                 throw new System.Web.Http.HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound));
 
@@ -68,7 +70,7 @@ namespace Journals.Web.Controllers
 
         public ActionResult GetJournal(int id) {
 
-            var userId = (int)Membership.GetUser().ProviderUserKey;
+            var userId = (int)_membershipService.GetUser().ProviderUserKey;
             var subscriptions = _subscriptionService.GetJournalsForSubscriber(userId);
 
             var j = _issueService.GetIssueById(id);
