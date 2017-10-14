@@ -130,6 +130,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Journals.Core\Journals.Core.csproj">
+      <Project>{CA18F84E-6822-4E34-A6CE-2B0CBD783534}</Project>
+      <Name>Journals.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Journals.Model\Journals.Model.csproj">
       <Project>{142360ab-7cc4-4e10-99db-a402d1bc60f7}</Project>
       <Name>Journals.Model</Name>
