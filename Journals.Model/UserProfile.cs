@@ -13,7 +13,7 @@ namespace Journals.Model
         public string UserName { get; set; }
 
         [EmailAddress]
-        public string Email { get; set; }
+        public string EmailAddress { get; set; }
 
     }
 }

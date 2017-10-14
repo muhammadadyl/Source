@@ -4,6 +4,7 @@ using Journals.Data.Infrastructure;
 using Journals.Model;
 using Journals.Repository;
 using Journals.Service.Interfaces;
+using System.Collections.Generic;
 
 namespace Journals.Service
 {
@@ -48,6 +49,11 @@ namespace Journals.Service
             }
 
             return opStatus;
+        }
+
+        public List<Issue> GetAllNewlyAddedIssue(DateTime dateTime)
+        {
+            return _issueRepository.GetAllNewlyAddedIssue(dateTime);
         }
 
         public Issue GetIssueById(int id)

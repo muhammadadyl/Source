@@ -1,13 +1,19 @@
 ﻿using Journals.Data;
+using Journals.Service.Interfaces;
 using Journals.Web.IoC;
+using Microsoft.Practices.Unity;
 using System;
+using System.Configuration;
 using System.Data.Entity;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using System.Web.Security;
 using WebMatrix.WebData;
 
 namespace Journals.Web
@@ -18,8 +24,11 @@ namespace Journals.Web
     public class MvcApplication : System.Web.HttpApplication
     {
         private static SimpleMembershipInitializer _initializer;
+        private static System.Timers.Timer timer = new System.Timers.Timer();
         private static object _initializerLock = new object();
+        private static object _emailSendingLock = new object();
         private static bool _isInitialized;
+        private static IUnityContainer _container { get; set; }
 
         protected void Application_Start()
         {
@@ -32,10 +41,38 @@ namespace Journals.Web
             BundleConfig.RegisterBundles(BundleTable.Bundles);
             AuthConfig.RegisterAuth();
 
-            var mappingContainer = IoCMappingContainer.GetInstance();
-            DependencyResolver.SetResolver(new IoCScopeContainer(mappingContainer));
+            _container = IoCMappingContainer.GetInstance();
+            DependencyResolver.SetResolver(new IoCScopeContainer(_container));
 
             LazyInitializer.EnsureInitialized(ref _initializer, ref _isInitialized, ref _initializerLock);
+
+            timer.Interval = double.Parse(ConfigurationManager.AppSettings["emailTrigger"]);//3600000;
+            timer.Start();
+            timer.Elapsed += Timer_Elapsed;
+
+        }
+
+        private void Timer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            Task.Run(() =>
+            {
+                var subscriptionService = _container.Resolve<ISubscriptionService>();
+                var issueService = _container.Resolve<IIssueService>();
+                var issues = issueService.GetAllNewlyAddedIssue(DateTime.Now.AddMilliseconds(0 - double.Parse(ConfigurationManager.AppSettings["emailTrigger"])));
+                Parallel.ForEach(issues, (issue, state) =>
+                {
+                    var users = subscriptionService.GetSubscriberForJournal(issue.JournalId);
+                    var emailService = _container.Resolve<IEmailService>();
+                    Parallel.ForEach(users, (user, loopState) =>
+                    {
+                        var content =
+                        string.Format(@"<p>Hi {0}</p>
+<p>We are glad to inform you that our new Issue is just being released. click the following <a href='{1}/Subscriber/GetJournal/{2}'>link</a> to redirect to Journal issue</p>", user.UserName, ConfigurationManager.AppSettings["website"], issue.Id);
+                        emailService.SendEmail(users.ToDictionary(d => d.UserName, v => v.EmailAddress), string.Format("Newly Issued Journal {0} vol {1} ", issue.Journal.Title, issue.Version), content);
+
+                    });
+                });
+            });
         }
 
         protected void Application_Error(object sender, EventArgs e)

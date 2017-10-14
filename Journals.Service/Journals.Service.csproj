@@ -52,6 +52,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EmailService.cs" />
+    <Compile Include="Interfaces\IEmailService.cs" />
     <Compile Include="Interfaces\IIssueService.cs" />
     <Compile Include="Interfaces\IJournalService.cs" />
     <Compile Include="Interfaces\IStaticMembershipService.cs" />

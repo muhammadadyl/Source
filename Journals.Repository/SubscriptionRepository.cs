@@ -19,16 +19,7 @@ namespace Journals.Repository
             try
             {
 
-                List<Journal> list = DataContext.Set<Journal>()
-                                          .Select(f => new Journal
-                                          {
-                                              Id = f.Id,
-                                              Title = f.Title,
-                                              Description = f.Description,
-                                              UserId = f.UserId,
-                                              User = f.User,
-                                              ModifiedDate = f.ModifiedDate
-                                          }).ToList();
+                List<Journal> list = DataContext.Set<Journal>().ToList();
 
                 return list;
             }

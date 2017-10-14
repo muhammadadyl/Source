@@ -7,6 +7,7 @@ using Journals.Service.Interfaces;
 using Journals.Web.Controllers;
 using Journals.Web.Mapper;
 using Microsoft.Practices.Unity;
+using System.Configuration;
 
 namespace Journals.Web.IoC
 {
@@ -37,6 +38,17 @@ namespace Journals.Web.IoC
             _Instance.RegisterType<IIssueService, IssueService>(new HierarchicalLifetimeManager());
             _Instance.RegisterType<IUnitOfWork, UnitOfWork>(new HierarchicalLifetimeManager());
             _Instance.RegisterType<IDatabaseFactory, DatabaseFactory<JournalsContext>>(new HierarchicalLifetimeManager());
+
+            string senderEmail = ConfigurationManager.AppSettings["senderEmail"];
+            string senderName = ConfigurationManager.AppSettings["senderName"];
+            string host = ConfigurationManager.AppSettings["host"];
+            int port = int.Parse(ConfigurationManager.AppSettings["port"]);
+            string username = ConfigurationManager.AppSettings["username"];
+            string password = ConfigurationManager.AppSettings["password"];
+
+
+            _Instance.RegisterType<IEmailService, EmailService>(new HierarchicalLifetimeManager(), new InjectionConstructor(senderEmail, senderName, host, port, username, password));
+
 
             var mapper = MappingProfile.InitializeAutoMapper().CreateMapper();
             _Instance.RegisterInstance<IMapper>(mapper);

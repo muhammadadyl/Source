@@ -1,6 +1,7 @@
 ﻿using Journals.Data.Infrastructure;
 using Journals.Model;
 using System.Collections.Generic;
+using System;
 
 namespace Journals.Repository
 {

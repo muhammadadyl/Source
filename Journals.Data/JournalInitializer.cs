@@ -25,54 +25,54 @@ namespace Journals.Data
                 roles.CreateRole("Subscriber");
             }
 
-            if (membership.GetUser("pappu", false) == null)
+            if (!WebSecurity.UserExists("pappu"))
             {
-                membership.CreateUserAndAccount("pappu", "Passw0rd");
+                WebSecurity.CreateUserAndAccount("pappu", "Passw0rd", new { EmailAddress = "smadeelibrahim@yahoo.com" });
             }
             if (!roles.GetRolesForUser("pappu").Contains("Publisher"))
             {
                 roles.AddUsersToRoles(new[] { "pappu" }, new[] { "Publisher" });
             }
 
-            if (membership.GetUser("pappy", false) == null)
+            if (!WebSecurity.UserExists("pappy"))
             {
-                membership.CreateUserAndAccount("pappy", "Passw0rd");
+                WebSecurity.CreateUserAndAccount("pappy", "Passw0rd", new { EmailAddress = "smadeelibrahim@yahoo.com" });
             }
             if (!roles.GetRolesForUser("pappy").Contains("Subscriber"))
             {
                 roles.AddUsersToRoles(new[] { "pappy" }, new[] { "Subscriber" });
             }
 
-            if (membership.GetUser("daniel", false) == null)
+            if (!WebSecurity.UserExists("daniel"))
             {
-                membership.CreateUserAndAccount("daniel", "Passw0rd");
+                WebSecurity.CreateUserAndAccount("daniel", "Passw0rd", new { EmailAddress = "smadeelibrahim@yahoo.com" });
             }
             if (!roles.GetRolesForUser("daniel").Contains("Publisher"))
             {
                 roles.AddUsersToRoles(new[] { "daniel" }, new[] { "Publisher" });
             }
 
-            if (membership.GetUser("andrew", false) == null)
+            if (!WebSecurity.UserExists("andrew"))
             {
-                membership.CreateUserAndAccount("andrew", "Passw0rd");
+                WebSecurity.CreateUserAndAccount("andrew", "Passw0rd", new { EmailAddress = "smadeelibrahim@yahoo.com" });
             }
             if (!roles.GetRolesForUser("andrew").Contains("Subscriber"))
             {
                 roles.AddUsersToRoles(new[] { "andrew" }, new[] { "Subscriber" });
             }
 
-            if (membership.GetUser("serge", false) == null)
+            if (!WebSecurity.UserExists("serge"))
             {
-                membership.CreateUserAndAccount("serge", "Passw0rd");
+                WebSecurity.CreateUserAndAccount("serge", "Passw0rd", new { EmailAddress = "smadeelibrahim@yahoo.com" });
             }
             if (!roles.GetRolesForUser("serge").Contains("Subscriber"))
             {
                 roles.AddUsersToRoles(new[] { "serge" }, new[] { "Subscriber" });
             }
 
-            if (membership.GetUser("harold", false) == null)
+            if (!WebSecurity.UserExists("harold"))
             {
-                membership.CreateUserAndAccount("harold", "Passw0rd");
+                WebSecurity.CreateUserAndAccount("harold", "Passw0rd", new { EmailAddress = "smadeelibrahim@yahoo.com" });
             }
             if (!roles.GetRolesForUser("harold").Contains("Publisher"))
             {

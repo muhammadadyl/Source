@@ -16,12 +16,14 @@ namespace Journals.Web.Controllers
     public class SubscriberController : Controller
     {
         private IJournalService _journalService;
+        private IIssueService _issueService;
         private ISubscriptionService _subscriptionService;
         private IMapper _mapper;
 
-        public SubscriberController(IJournalService journalService, ISubscriptionService subscriptionService, IMapper mapper)
+        public SubscriberController(IJournalService journalService, IIssueService issueService, ISubscriptionService subscriptionService, IMapper mapper)
         {
             _journalService = journalService;
+            _issueService = issueService;
             _subscriptionService = subscriptionService;
             _mapper = mapper;
         }
@@ -62,6 +64,22 @@ namespace Journals.Web.Controllers
                 throw new System.Web.Http.HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound));
 
             return RedirectToAction("Index");
+        }
+
+        public ActionResult GetJournal(int id) {
+
+            var userId = (int)Membership.GetUser().ProviderUserKey;
+            var subscriptions = _subscriptionService.GetJournalsForSubscriber(userId);
+
+            var j = _issueService.GetIssueById(id);
+
+            if (j == null)
+                throw new System.Web.Http.HttpResponseException(new HttpResponseMessage(HttpStatusCode.NotFound));
+
+            if (subscriptions.Where(a => a.JournalId == j.JournalId).Count() == 0)
+                throw new System.Web.Http.HttpResponseException(new HttpResponseMessage(HttpStatusCode.Forbidden));
+
+            return File(j.Content, j.ContentType);
         }
     }
 }

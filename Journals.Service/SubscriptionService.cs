@@ -77,5 +77,10 @@ namespace Journals.Service
 
             return opStatus;
         }
+
+        public List<UserProfile> GetSubscriberForJournal(int journalId)
+        {
+            return _subscriptionRepository.GetList(u => u.JournalId == journalId).Select(a => a.User).ToList();
+        }
     }
 }

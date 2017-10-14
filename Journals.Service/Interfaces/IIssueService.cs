@@ -14,5 +14,6 @@ namespace Journals.Service.Interfaces
         OperationStatus AddIssue(Issue newIssue);
         OperationStatus UpdateIssue(Issue newIssue);
         OperationStatus DeleteIssue(Issue newIssue);
+        List<Issue> GetAllNewlyAddedIssue(DateTime dateTime);
     }
 }
