@@ -124,6 +124,7 @@
   <ItemGroup>
     <Compile Include="Controllers\PublisherControllerTest.cs" />
     <Compile Include="Controllers\SubscriberControllerTest.cs" />
+    <Compile Include="Controllers\IssueControllerTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

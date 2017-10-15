@@ -4,12 +4,9 @@ using Journals.Service.Interfaces;
 using Journals.Web.Filters;
 using Journals.Web.Helpers;
 using Journals.Web.ViewModels;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Journals.Web.Controllers

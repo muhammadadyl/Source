@@ -26,7 +26,7 @@ namespace Journals.Service
             _credential = new System.Net.NetworkCredential(UserName, Password);
             _from = new MailAddress(senderEmail, senderName, Encoding.UTF8);
         }
-        public void SendEmail(Dictionary<string, string> emails, string subject, string content)
+        public void SendEmail(string username, string email, string subject, string content)
         {
             SmtpClient client = new SmtpClient();
             client.Port = _port;
@@ -36,14 +36,12 @@ namespace Journals.Service
             client.EnableSsl = true;
             client.Credentials = _credential;
             MailMessage message = new MailMessage();
-            foreach (KeyValuePair<string, string> entry in emails)
-                message.To.Add(new MailAddress(entry.Value, entry.Key));
+            message.To.Add(new MailAddress(email, username));
             message.From = _from;
             message.IsBodyHtml = true;
             message.Body = content;
             message.Subject = subject;
-            string userState = subject;
-            client.SendAsync(message, userState);
+            client.Send(message);
             message.Dispose();
         }
     }

@@ -68,7 +68,7 @@ namespace Journals.Web
                         var content =
                         string.Format(@"<p>Hi {0}</p>
 <p>We are glad to inform you that our new Issue is just being released. click the following <a href='{1}/Subscriber/GetJournal/{2}'>link</a> to redirect to Journal issue</p>", user.UserName, ConfigurationManager.AppSettings["website"], issue.Id);
-                        emailService.SendEmail(users.ToDictionary(d => d.UserName, v => v.EmailAddress), string.Format("Newly Issued Journal {0} vol {1} ", issue.Journal.Title, issue.Version), content);
+                        emailService.SendEmail(user.UserName, user.EmailAddress, string.Format("Newly Issued Journal {0} vol {1} ", issue.Journal.Title, issue.Version), content);
 
                     });
                 });

@@ -8,6 +8,6 @@ namespace Journals.Service.Interfaces
 {
     public interface IEmailService
     {
-        void SendEmail(Dictionary<string, string> emails,string subject, string content);
+        void SendEmail(string username, string email, string subject, string content);
     }
 }
