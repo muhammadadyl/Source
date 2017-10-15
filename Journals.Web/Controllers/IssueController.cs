@@ -44,7 +44,7 @@ namespace Journals.Web.Controllers
             if (selectedJournal?.UserId == (int)_membershipService.GetUser().ProviderUserKey)
             {
                 issue.JournalId = selectedJournal.Id;
-                issue.Version = selectedJournal.Issues.Count() + 1;
+                issue.Version = (selectedJournal.Issues.Count > 0 ? selectedJournal.Issues.Max(a => a.Version) : 0) + 1;
                 var newIssue = _mapper.Map<IssueViewModel, Issue>(issue);// Mapper Updates cause syntax change
                 Helper.PopulateFile(issue.File, newIssue);
 

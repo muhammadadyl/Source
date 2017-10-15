@@ -80,7 +80,10 @@ namespace Journals.Service
 
         public List<UserProfile> GetSubscriberForJournal(int journalId)
         {
-            return _subscriptionRepository.GetList(u => u.JournalId == journalId).Select(a => a.User).ToList();
+            var subscriptions = _subscriptionRepository.GetList(u => u.JournalId == journalId);
+            if (subscriptions != null)
+                return subscriptions.Where(s => s.User != null).Select(a => a.User).ToList();
+            return new List<UserProfile>();
         }
     }
 }
