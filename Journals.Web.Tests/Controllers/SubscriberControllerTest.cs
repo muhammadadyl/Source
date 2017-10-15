@@ -22,7 +22,7 @@ namespace Journals.Web.Tests.Controllers
         private IJournalService journalService = Mock.Create<IJournalService>();
         private IIssueService issueService = Mock.Create<IIssueService>();
         private ISubscriptionService subscriptionService = Mock.Create<ISubscriptionService>();
-        private IMapper mapper = MappingProfile.InitializeAutoMapper().CreateMapper();
+        private IMapper mapper = Mock.Create<IMapper>();
 
         [TestMethod]
         public void Index_Returns_All_Subscriber()
