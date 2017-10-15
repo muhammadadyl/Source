@@ -22,7 +22,7 @@ namespace Journals.Web.Tests.Controllers
         private IJournalService journalService = Mock.Create<IJournalService>();
         private IIssueService issueService = Mock.Create<IIssueService>();
         private ISubscriptionService subscriptionService = Mock.Create<ISubscriptionService>();
-        private IMapper mapper = MappingProfile.InitializeAutoMapper().CreateMapper();
+        private IMapper mapper = Mock.Create<IMapper>();
 
         [TestMethod]
         public void Create_return_issue()
@@ -68,11 +68,15 @@ namespace Journals.Web.Tests.Controllers
         [TestMethod()]
         public void Edit_return_journal()
         {
-            Mock.Arrange(() => issueService.GetIssueById(1)).Returns(new Issue { Id = 1, Version = 1, FileName = "something", JournalId = 1, ContentType = "pdf", Content = new byte[1000], Journal = new Journal { Id = 1, UserId = 1, Title = "test", Description = "details goes here" } });
+            var selectedIssue = new Issue { Id = 1, Version = 1, FileName = "something", JournalId = 1, ContentType = "pdf", Content = new byte[1000], Journal = new Journal { Id = 1, UserId = 1, Title = "test", Description = "details goes here" } };
+            Mock.Arrange(() => issueService.GetIssueById(1)).Returns(selectedIssue);
 
             var userMock = Mock.Create<MembershipUser>();
             Mock.Arrange(() => userMock.ProviderUserKey).Returns(1);
             Mock.Arrange(() => membershipService.GetUser()).Returns(userMock);
+
+            var newIssue = Mock.Create<IssueViewModel>();
+            Mock.Arrange(() => mapper.Map<Issue, IssueViewModel>(selectedIssue)).Returns(newIssue);
 
             //Act
             IssueController controller = new IssueController(issueService, journalService, membershipService, mapper);
@@ -80,7 +84,7 @@ namespace Journals.Web.Tests.Controllers
             var model = actionResult.Model as IssueViewModel;
 
             //Assert
-            Assert.AreEqual(1, model.Id);
+            Assert.AreEqual(newIssue, model);
         }
 
         [TestMethod()]
@@ -106,11 +110,16 @@ namespace Journals.Web.Tests.Controllers
         [TestMethod()]
         public void Delete_return_issue()
         {
-            Mock.Arrange(() => issueService.GetIssueById(1)).Returns(new Issue { Id = 1, Version = 1, FileName = "something", JournalId = 1, ContentType = "pdf", Content = new byte[1000], Journal = new Journal { Id = 1, UserId = 1, Title = "test", Description = "details goes here" } });
+            var selectedIssue = new Issue { Id = 1, Version = 1, FileName = "something", JournalId = 1, ContentType = "pdf", Content = new byte[1000], Journal = new Journal { Id = 1, UserId = 1, Title = "test", Description = "details goes here" } };
+            Mock.Arrange(() => issueService.GetIssueById(1)).Returns(selectedIssue);
 
             var userMock = Mock.Create<MembershipUser>();
             Mock.Arrange(() => userMock.ProviderUserKey).Returns(1);
             Mock.Arrange(() => membershipService.GetUser()).Returns(userMock);
+
+            var newIssue = Mock.Create<IssueViewModel>();
+            Mock.Arrange(() => mapper.Map<Issue, IssueViewModel> (selectedIssue)).Returns(newIssue);
+            newIssue.Id = 1;
 
             //Act
             IssueController controller = new IssueController(issueService, journalService, membershipService, mapper);
@@ -118,25 +127,33 @@ namespace Journals.Web.Tests.Controllers
             var model = actionResult.Model as IssueViewModel;
 
             //Assert
-            Assert.AreEqual(1, model.Id);
+            Assert.AreEqual(newIssue, model);
         }
 
         [TestMethod()]
         public void Delete()
         {
-            var issue = new Issue { Id = 1, Version = 1, FileName = "something", JournalId = 1, ContentType = "pdf", Content = new byte[1000], Journal = new Journal { Id = 1, UserId = 1, Title = "test", Description = "details goes here" } };
+            var issue = Mock.Create<Issue>();
+            var journal = Mock.Create<Journal>();
             Mock.Arrange(() => issueService.GetIssueById(1)).Returns(issue);
-            Mock.Arrange(() => journalService.GetJournalById(1)).Returns(new Journal { Id = 1, Title = "test", Description = "description of tesrt", UserId = 1 });
+            issue.JournalId = 1;
+            Mock.Arrange(() => journalService.GetJournalById(1)).Returns(journal);
+            journal.UserId = 1;
+
             var userMock = Mock.Create<MembershipUser>();
             Mock.Arrange(() => userMock.ProviderUserKey).Returns(1);
             Mock.Arrange(() => membershipService.GetUser()).Returns(userMock);
+
+            var newIssue = Mock.Create<IssueViewModel>();
+            Mock.Arrange(() => mapper.Map<IssueViewModel, Issue>(newIssue)).Returns(issue);
+
             var opStatusMock = Mock.Create<OperationStatus>();
             opStatusMock.Status = true;
             Mock.Arrange(() => issueService.DeleteIssue(issue)).Returns(opStatusMock);
 
             //Act
             IssueController controller = new IssueController(issueService, journalService, membershipService, mapper);
-            RedirectToRouteResult actionResult = (RedirectToRouteResult)controller.Delete(1, new IssueViewModel { Id = 1, JournalId = 1, Version = 1 });
+            RedirectToRouteResult actionResult = (RedirectToRouteResult)controller.Delete(1, newIssue);
 
             //Assert
             Assert.IsNotNull(actionResult);

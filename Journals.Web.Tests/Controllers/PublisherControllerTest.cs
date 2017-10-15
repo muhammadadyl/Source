@@ -21,37 +21,44 @@ namespace Journals.Web.Tests.Controllers
     {
         private IStaticMembershipService membershipService = Mock.Create<IStaticMembershipService>();
         private IJournalService journalService = Mock.Create<IJournalService>();
-        private IMapper mapper = MappingProfile.InitializeAutoMapper().CreateMapper();
+        private IMapper mapper = Mock.Create<IMapper>();
 
         [TestMethod]
         public void Index_Returns_All_Journals()
         {
 
             //Arrange
+            var journals = new List<Journal>(){
+                    new Journal{ Id=1, Description="TestDesc", Title="Tester", UserId=1, ModifiedDate= DateTime.Now},
+                    new Journal{ Id=1, Description="TestDesc2", Title="Tester2", UserId=1, ModifiedDate = DateTime.Now}
+            };
+
             var userMock = Mock.Create<MembershipUser>();
             Mock.Arrange(() => userMock.ProviderUserKey).Returns(1);
             Mock.Arrange(() => membershipService.GetUser()).Returns(userMock);
 
-            Mock.Arrange(() => journalService.GetAllJournals((int)userMock.ProviderUserKey)).Returns(new List<Journal>(){
-                    new Journal{ Id=1, Description="TestDesc", Title="Tester", UserId=1, ModifiedDate= DateTime.Now},
-                    new Journal{ Id=1, Description="TestDesc2", Title="Tester2", UserId=1, ModifiedDate = DateTime.Now}
-            }).MustBeCalled();
+            Mock.Arrange(() => journalService.GetAllJournals((int)userMock.ProviderUserKey)).Returns(journals).MustBeCalled();
 
-
+            var journalsViewModels = Mock.Create<List<JournalViewModel>>();
+            Mock.Arrange(() => mapper.Map<List<Journal>, List<JournalViewModel>>(journals)).Returns(journalsViewModels);
             //Act
             PublisherController controller = new PublisherController(journalService, membershipService, mapper);
             ViewResult actionResult = (ViewResult)controller.Index();
             var model = actionResult.Model as IEnumerable<JournalViewModel>;
 
             //Assert
-            Assert.AreEqual(2, model.Count());
+            Assert.AreEqual(journalsViewModels, model);
         }
 
         [TestMethod()]
         public void Details_return_journal()
         {
-            int id = 1;
-            Mock.Arrange(() => journalService.GetJournalById(id)).Returns(new Journal { Id = 1, Description = "TestDesc", Title = "Tester", UserId = 1, ModifiedDate = DateTime.Now }).MustBeCalled();
+            var id = 0;
+            var selectedJournal = Mock.Create<Journal>();
+            Mock.Arrange(() => journalService.GetJournalById(id)).Returns(selectedJournal).MustBeCalled();
+            var selectedJournalVm = Mock.Create<JournalViewModel>();
+            Mock.Arrange(() => mapper.Map<Journal, JournalViewModel>(selectedJournal)).Returns(selectedJournalVm);
+
 
             //Act
             PublisherController controller = new PublisherController(journalService, membershipService, mapper);
@@ -59,42 +66,53 @@ namespace Journals.Web.Tests.Controllers
             var model = actionResult.Model as JournalViewModel;
 
             //Assert
-            Assert.AreEqual(id, model.Id);
+            Assert.AreEqual(selectedJournalVm, model);
 
         }
 
         [TestMethod()]
         public void Create_return_journal()
         {
+            var journalNew = Mock.Create<JournalViewModel>();
+            var journal = Mock.Create<Journal>();
+            Mock.Arrange(() => mapper.Map<JournalViewModel, Journal>(journalNew)).Returns(journal);
 
             var userMock = Mock.Create<MembershipUser>();
             Mock.Arrange(() => userMock.ProviderUserKey).Returns(1);
             Mock.Arrange(() => membershipService.GetUser()).Returns(userMock);
 
-            var opStatus = Mock.Create<OperationStatus>();
-            Mock.Arrange(() => journalService.AddJournal(Mock.Create<Journal>())).Returns(opStatus);
+            var opStatusMock = Mock.Create<OperationStatus>();
+            opStatusMock.Status = true;
 
+            Mock.Arrange(() => journalService.AddJournal(journal)).Returns(opStatusMock);
 
             //Act
             PublisherController controller = new PublisherController(journalService, membershipService, mapper);
-            ViewResult actionResult = (ViewResult)controller.Create(Mock.Create<JournalViewModel>());
-            var model = actionResult.Model as JournalViewModel;
+            RedirectToRouteResult actionResult = (RedirectToRouteResult)controller.Create(journalNew);
+
 
             //Assert
-            Assert.IsNotNull(model);
+            Assert.IsNotNull(actionResult);
 
         }
 
         [TestMethod()]
         public void Delete_return_journal()
         {
-            int id = 1;
-            Mock.Arrange(() => journalService.GetJournalById(id)).Returns(new Journal { Id = 1, Description = "TestDesc", Title = "Tester", UserId = 1, ModifiedDate = DateTime.Now }).MustBeCalled();
+            var id = 1;
+            var journal = Mock.Create<Journal>();
+            journal.UserId = 1;
+
+            Mock.Arrange(() => journalService.GetJournalById(id)).Returns(journal);
 
             var userMock = Mock.Create<MembershipUser>();
             Mock.Arrange(() => userMock.ProviderUserKey).Returns(1);
             Mock.Arrange(() => membershipService.GetUser()).Returns(userMock);
 
+            
+            var journalNew = Mock.Create<JournalViewModel>();
+
+            Mock.Arrange(() => mapper.Map<Journal, JournalViewModel>(journal)).Returns(journalNew);
 
             //Act
             PublisherController controller = new PublisherController(journalService, membershipService, mapper);
@@ -102,7 +120,7 @@ namespace Journals.Web.Tests.Controllers
             var model = actionResult.Model as JournalViewModel;
 
             //Assert
-            Assert.AreEqual(id, model.Id);
+            Assert.AreEqual(journalNew, model);
 
         }
 
@@ -115,7 +133,8 @@ namespace Journals.Web.Tests.Controllers
             Mock.Arrange(() => membershipService.GetUser()).Returns(userMock);
 
             var journal = Mock.Create<JournalViewModel>();
-            var journalNew = mapper.Map<JournalViewModel, Journal>(journal);
+            var journalNew = Mock.Create<Journal>();
+            Mock.Arrange(()=> mapper.Map<JournalViewModel, Journal>(journal)).Returns(journalNew);
 
             var opStatusMock = Mock.Create<OperationStatus>();
             opStatusMock.Status = true;
@@ -134,13 +153,16 @@ namespace Journals.Web.Tests.Controllers
         [TestMethod()]
         public void Edit_return_journal()
         {
-            int id = 1;
-            Mock.Arrange(() => journalService.GetJournalById(id)).Returns(new Journal { Id = 1, Description = "TestDesc", Title = "Tester", UserId = 1, ModifiedDate = DateTime.Now }).MustBeCalled();
+            var id = 1;
+            var selectedJournal = new Journal { Id = 1, Description = "TestDesc", Title = "Tester", UserId = 1, ModifiedDate = DateTime.Now };
+            Mock.Arrange(() => journalService.GetJournalById(id)).Returns(selectedJournal);
 
             var userMock = Mock.Create<MembershipUser>();
             Mock.Arrange(() => userMock.ProviderUserKey).Returns(1);
             Mock.Arrange(() => membershipService.GetUser()).Returns(userMock);
 
+            var journalEdit = Mock.Create<JournalUpdateViewModel>();
+            Mock.Arrange(() => mapper.Map<Journal, JournalUpdateViewModel>(selectedJournal)).Returns(journalEdit);
 
             //Act
             PublisherController controller = new PublisherController(journalService, membershipService, mapper);
@@ -148,7 +170,7 @@ namespace Journals.Web.Tests.Controllers
             var model = actionResult.Model as JournalUpdateViewModel;
 
             //Assert
-            Assert.AreEqual(id, model.Id);
+            Assert.AreEqual(journalEdit, model);
 
         }
 
@@ -162,7 +184,8 @@ namespace Journals.Web.Tests.Controllers
             Mock.Arrange(() => membershipService.GetUser()).Returns(userMock);
 
             var journal = Mock.Create<JournalUpdateViewModel>();
-            var journalEdit = mapper.Map<JournalUpdateViewModel, Journal>(journal);
+            var journalEdit = Mock.Create<Journal>();
+            Mock.Arrange(() => mapper.Map<JournalUpdateViewModel, Journal>(journal)).Returns(journalEdit);
 
             var opStatusMock = Mock.Create<OperationStatus>();
             opStatusMock.Status = true;
